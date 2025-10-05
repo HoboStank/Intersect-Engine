@@ -85,29 +85,29 @@ public class IntersectSkin : TexturedBase
     {
         base.InitializeColors();
 
-        Colors.Button.Normal = Renderer.PixelColor(_texture, 0, 480, Color.Yellow);
-        Colors.Button.Disabled = Renderer.PixelColor(_texture, 8, 480, Color.Yellow);
-        Colors.Button.Hover = Renderer.PixelColor(_texture, 16, 480, Color.Yellow);
-        Colors.Button.Active = Renderer.PixelColor(_texture, 24, 480, Color.Yellow);
+    Colors.Button.Normal = Renderer.PixelColor(_texture, 0, 480, Color.Cyan);
+    Colors.Button.Disabled = Renderer.PixelColor(_texture, 8, 480, Color.Cyan);
+    Colors.Button.Hover = Renderer.PixelColor(_texture, 16, 480, Color.Cyan);
+    Colors.Button.Active = Renderer.PixelColor(_texture, 24, 480, Color.Cyan);
 
-        Colors.Label.Normal = Renderer.PixelColor(_texture, 32, 480, Color.Yellow);
-        Colors.Label.Disabled = Renderer.PixelColor(_texture, 40, 480, Color.Yellow);
-        Colors.Label.Hover = Renderer.PixelColor(_texture, 48, 480, Color.Yellow);
-        Colors.Label.Active = Renderer.PixelColor(_texture, 56, 480, Color.Yellow);
+    Colors.Label.Normal = Renderer.PixelColor(_texture, 32, 480, Color.Cyan);
+    Colors.Label.Disabled = Renderer.PixelColor(_texture, 40, 480, Color.Cyan);
+    Colors.Label.Hover = Renderer.PixelColor(_texture, 48, 480, Color.Cyan);
+    Colors.Label.Active = Renderer.PixelColor(_texture, 56, 480, Color.Cyan);
 
-        Colors.Tab.Active.Normal = Renderer.PixelColor(_texture, 0, 480, Color.Yellow);
-        Colors.Tab.Active.Disabled = Renderer.PixelColor(_texture, 8, 480, Color.Yellow);
-        Colors.Tab.Active.Hover = Renderer.PixelColor(_texture, 16, 480, Color.Yellow);
-        Colors.Tab.Active.Active = Renderer.PixelColor(_texture, 24, 480, Color.Yellow);
-        Colors.Tab.Inactive.Normal = Renderer.PixelColor(_texture, 0, 480, Color.Yellow);
-        Colors.Tab.Inactive.Disabled = Renderer.PixelColor(_texture, 8, 480, Color.Yellow);
-        Colors.Tab.Inactive.Hover = Renderer.PixelColor(_texture, 16, 480, Color.Yellow);
-        Colors.Tab.Inactive.Active = Renderer.PixelColor(_texture, 24, 480, Color.Yellow);
+    Colors.Tab.Active.Normal = Renderer.PixelColor(_texture, 0, 480, Color.Cyan);
+    Colors.Tab.Active.Disabled = Renderer.PixelColor(_texture, 8, 480, Color.Cyan);
+    Colors.Tab.Active.Hover = Renderer.PixelColor(_texture, 16, 480, Color.Cyan);
+    Colors.Tab.Active.Active = Renderer.PixelColor(_texture, 24, 480, Color.Cyan);
+    Colors.Tab.Inactive.Normal = Renderer.PixelColor(_texture, 0, 480, Color.Cyan);
+    Colors.Tab.Inactive.Disabled = Renderer.PixelColor(_texture, 8, 480, Color.Cyan);
+    Colors.Tab.Inactive.Hover = Renderer.PixelColor(_texture, 16, 480, Color.Cyan);
+    Colors.Tab.Inactive.Active = Renderer.PixelColor(_texture, 24, 480, Color.Cyan);
 
-        Colors.Tree.Lines = Renderer.PixelColor(_texture, 64, 480, Color.Yellow);
-        Colors.Tree.Normal = Renderer.PixelColor(_texture, 72, 480, Color.Yellow);
-        Colors.Tree.Hover = Renderer.PixelColor(_texture, 80, 480, Color.Yellow);
-        Colors.Tree.Selected = Renderer.PixelColor(_texture, 88, 480, Color.Yellow);
+    Colors.Tree.Lines = Renderer.PixelColor(_texture, 64, 480, Color.Cyan);
+    Colors.Tree.Normal = Renderer.PixelColor(_texture, 72, 480, Color.Cyan);
+    Colors.Tree.Hover = Renderer.PixelColor(_texture, 80, 480, Color.Cyan);
+    Colors.Tree.Selected = Renderer.PixelColor(_texture, 88, 480, Color.Cyan);
     }
 
     protected override void InitializeTextures()
