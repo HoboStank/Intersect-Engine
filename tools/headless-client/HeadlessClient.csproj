@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <!-- Ensure IntersectRepoPath points to the repository root, not the tools folder -->
+  <PropertyGroup>
+    <IntersectRepoPath>$(MSBuildProjectDirectory)\..\..</IntersectRepoPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Intersect.Client.Core\Intersect.Client.Core.csproj" />
+    <ProjectReference Include="..\..\Intersect.Client\Intersect.Client.csproj" />
+    <ProjectReference Include="..\..\Intersect.Client.Framework\Intersect.Client.Framework.csproj" />
+    <ProjectReference Include="..\..\Intersect.Network\Intersect.Network.csproj" />
+  </ItemGroup>
+
+  <!-- Override inherited ApplicationIcon from Directory.Build.props/Intersect.props to avoid embedding icons for this headless test app -->
+  <PropertyGroup>
+    <ApplicationIcon></ApplicationIcon>
+  </PropertyGroup>
+</Project>

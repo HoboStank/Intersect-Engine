@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Resources;
@@ -48,16 +50,41 @@ internal class FullServerContext : ServerContext, IFullServerContext
     protected override RsaKey AsymmetricKey
     {
         get {
+            // Priority 1: explicit file path to private key (useful for container mounts)
+            // Env var: INTERSECT_NETWORK_HANDSHAKE_PRIVATE_KEY -> full path to network.handshake.bkey
+            var explicitKeyPath = Environment.GetEnvironmentVariable("INTERSECT_NETWORK_HANDSHAKE_PRIVATE_KEY");
+            if (!string.IsNullOrEmpty(explicitKeyPath) && File.Exists(explicitKeyPath))
+            {
+                using var fs = File.OpenRead(explicitKeyPath);
+                ApplicationContext.Context.Value?.Logger.LogInformation($"Using private handshake key from explicit path: {explicitKeyPath}");
+                return new RsaKey(fs);
+            }
+
+            // Priority 2: keys directory (env var) -> look for network.handshake.bkey inside
+            // Env var: INTERSECT_NETWORK_KEYS_DIR -> directory containing network.handshake.bkey
+            var keysDir = Environment.GetEnvironmentVariable("INTERSECT_NETWORK_KEYS_DIR");
+            if (!string.IsNullOrEmpty(keysDir))
+            {
+                var candidate = Path.Combine(keysDir, "network.handshake.bkey");
+                if (File.Exists(candidate))
+                {
+                    using var fs = File.OpenRead(candidate);
+                    ApplicationContext.Context.Value?.Logger.LogInformation($"Using private handshake key from keys directory: {candidate}");
+                    return new RsaKey(fs);
+                }
+            }
+
+            // Fallback: embedded resource (existing behavior)
             using var asymmetricKeyStream = typeof(FullServerContext).Assembly.GetManifestResourceStream(AsymmetricKeyManifestResourceName);
             if (asymmetricKeyStream == default)
             {
                 throw new MissingManifestResourceException(
-                    $"Unable to get manifest resource stream for '{AsymmetricKeyManifestResourceName}'"
+                    $"Unable to get manifest resource stream for '{AsymmetricKeyManifestResourceName}' and no filesystem key was found."
                 );
             }
 
-            RsaKey rsaKey = new(asymmetricKeyStream);
-            return rsaKey;
+            ApplicationContext.Context.Value?.Logger.LogInformation("Using embedded private handshake key from assembly resource.");
+            return new RsaKey(asymmetricKeyStream);
         }
     }
 

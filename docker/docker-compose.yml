@@ -1,0 +1,28 @@
+services:
+  intersect-server:
+    build:
+      context: ..
+      dockerfile: docker/server/Dockerfile
+    image: intersect-server:local
+    container_name: intersect-server
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5400
+      # Point the server to a mounted keys directory so the container can load the private handshake key at runtime
+      - INTERSECT_NETWORK_KEYS_DIR=/app/keys
+    # Disable the interactive console (stdin is closed in containers) and also disable UPnP and the external port checker.
+    # Without --no-console, Console.ReadLine() returns null and the server requests shutdown immediately.
+    command: ["--no-console", "--no-upnp", "--no-port-check"]
+    volumes:
+      - ./server-data/resources:/app/resources
+      - ./server-data/logs:/app/logs
+      # Mount the locally-generated network handshake keys so the server can read the private key at runtime.
+      # Adjust the host path if you used a different build configuration.
+      - ../Intersect.Network/bin/Debug/keys:/app/keys:ro
+    ports:
+      # Game UDP port
+      - "5400:5400/udp"
+      # Web UI/API HTTP
+      - "5400:5400"
+      # Web UI/API HTTPS (used in published builds)
+      - "5443:5443"

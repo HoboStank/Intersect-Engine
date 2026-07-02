@@ -16,6 +16,7 @@ Intersect provides a complete game development suite for creating 2d mmorpgs wit
 			- [Required](#required)
 		- [Getting started](#getting-started)
 		- [Compiling](#compiling)
+	- [AI Agent Reference](#ai-agent-reference)
 	- [Intersect Assets](#intersect-assets)
 	- [Support and Contributions](#support-and-contributions)
 	- [Source Code](#source-code)
@@ -63,6 +64,17 @@ To compile either use an IDE or one of the following commands:
 - `dotnet publish -p:Configuration=Release -p:PackageVersion=0.8.0-beta -p:Version=0.8.0 -r <runtime-id>`
 	- e.g. `dotnet publish -p:Configuration=Release -p:PackageVersion=0.8.0-beta -p:Version=0.8.0 -r linux-x64`
 	- The automated builds use the above command for the RIDs `linux-x64`, `osx-x64` and `win-x64`
+
+## AI Agent Reference
+
+For an AI-friendly, skimmable map of startup, networking, plugins, Docker usage, and common flows, see `Documentation/AI-Agent-Reference.md`.
+
+Quick AI / developer reference
+- See Documentation/AI-Agent-Reference.md for a compact, agent-friendly guide to repository layout, startup dataflow, and runtime overrides (skin, server docker flags).
+
+Notable repo overrides:
+- UI skin override: place a replacement GUI texture named `skin-intersect.png` in the client resources (disk lookup takes precedence over the embedded skin).
+- Server in-container flags: when running the server inside containers prefer `--no-console`, `--no-upnp`, and `--no-port-check` (see the Docker compose in docker/ for an example).
 
 ### Extended Engine Features
 

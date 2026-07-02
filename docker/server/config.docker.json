@@ -1,0 +1,14 @@
+{
+  "GameName": "Intersect",
+  "ServerPort": 5400,
+  "AdminOnly": false,
+  "BlockClientRegistrations": false,
+  "MaxClientConnections": 100,
+  "MaximumLoggedInUsers": 50,
+  "UPnP": false,
+  "OpenPortChecker": false,
+  "Logging": { "Level": "Information", "Chat": true, "GuildActivity": true, "Trade": true, "UserActivity": true },
+  "GameDatabase": { "Type": "SQLite", "LogLevel": "Error", "KillServerOnConcurrencyException": true },
+  "LoggingDatabase": { "Type": "SQLite", "LogLevel": "Error", "KillServerOnConcurrencyException": true },
+  "PlayerDatabase": { "Type": "SQLite", "LogLevel": "Error", "KillServerOnConcurrencyException": true }
+}

@@ -176,7 +176,15 @@ public partial class HailPacket : ConnectionPacket
         }
         catch (Exception exception)
         {
-            ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Error decrypting hail packet");
+            try
+            {
+                var hex = EncryptedData != null ? Convert.ToHexString(EncryptedData) : "(null)";
+                ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Error decrypting hail packet; EncryptedData({Length}): {Hex}", EncryptedData?.Length ?? 0, hex);
+            }
+            catch (Exception logEx)
+            {
+                ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Error decrypting hail packet (also failed to format encrypted data): {LogEx}", logEx.Message);
+            }
             return false;
         }
     }

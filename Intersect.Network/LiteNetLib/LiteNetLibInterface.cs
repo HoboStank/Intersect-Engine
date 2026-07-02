@@ -28,6 +28,8 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
     private readonly RSA _asymmetricServer;
     private readonly RSA _asymmetricUnconnected;
     private readonly ConcurrentQueue<InboundBuffer> _pendingInboundBuffers = new();
+    private CancellationTokenSource? _pollingCts;
+    private Task? _pollingTask;
 
     static LiteNetLibInterface()
     {
@@ -138,6 +140,44 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
         {
             throw new Exception($"Failed to listen on port {_network.Configuration.Port}");
         }
+
+        // Ensure events are processed even when UnsyncedEvents is set; this also helps timers/timeouts.
+        try
+        {
+            _pollingCts = new CancellationTokenSource();
+            var token = _pollingCts.Token;
+            ApplicationContext.Context.Value?.Logger.LogInformation("Starting LiteNetLib event polling loop");
+            _pollingTask = Task.Run(async () =>
+            {
+                // Small delay to avoid busy spin; LiteNetLib examples often poll in a tight loop.
+                var delay = TimeSpan.FromMilliseconds(1);
+                while (!token.IsCancellationRequested)
+                {
+                    try
+                    {
+                        _manager.PollEvents();
+                    }
+                    catch (Exception ex)
+                    {
+                        ApplicationContext.Context.Value?.Logger.LogDebug(ex, "Error while polling LiteNetLib events");
+                    }
+
+                    try
+                    {
+                        await Task.Delay(delay, token).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // Expected on shutdown
+                        break;
+                    }
+                }
+            }, token);
+        }
+        catch (Exception ex)
+        {
+            ApplicationContext.Context.Value?.Logger.LogDebug(ex, "Failed to start LiteNetLib polling task");
+        }
     }
 
     public void Stop(string reason = "stopping")
@@ -145,6 +185,33 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
         ApplicationContext.Context.Value?.Logger.LogDebug($"Stopping {nameof(LiteNetLibInterface)} (\"{reason}\")...");
         var reasonData = Encoding.UTF8.GetBytes(reason);
         _manager.DisconnectAll(reasonData, 0, reasonData.Length);
+
+        try
+        {
+            _pollingCts?.Cancel();
+        }
+        catch
+        {
+            // ignore
+        }
+
+        try
+        {
+            _pollingTask?.Wait(TimeSpan.FromSeconds(2));
+        }
+        catch
+        {
+            // ignore
+        }
+
+        try
+        {
+            _manager.Stop();
+        }
+        catch (Exception ex)
+        {
+            ApplicationContext.Context.Value?.Logger.LogDebug(ex, "Error while stopping LiteNetLib manager");
+        }
     }
 
     public bool Connect()
@@ -518,6 +585,31 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
     public void OnConnectionRequest(ConnectionRequest request)
     {
         NetDataWriter response = new();
+
+        // Temporary diagnostics: log raw request length to confirm receipt without consuming the reader
+        try
+        {
+            var rawLen = request.Data.RawDataSize;
+            ApplicationContext.Context.Value?.Logger.LogInformation($"OnConnectionRequest received data length={rawLen} from {request.RemoteEndPoint}");
+#if DIAGNOSTIC
+            try
+            {
+                var rawBytes = request.Data.RawData;
+                if (rawBytes != null)
+                {
+                    ApplicationContext.Context.Value?.Logger.LogDebug($"OnConnectionRequest raw bytes ({rawBytes.Length})={Convert.ToHexString(rawBytes)}");
+                }
+            }
+            catch (Exception ex2)
+            {
+                ApplicationContext.Context.Value?.Logger.LogDebug(ex2, "Failed to log raw request bytes");
+            }
+#endif
+        }
+        catch (Exception ex)
+        {
+            ApplicationContext.Context.Value?.Logger.LogDebug(ex, "Failed to log connection request data length");
+        }
 
         var inboundBuffer = new LiteNetLibInboundBuffer(request.Data);
         var deserializedBuffer = MessagePacker.Instance.Deserialize(inboundBuffer);

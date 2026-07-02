@@ -221,3 +221,10 @@ packages/
 .local/
 
 Custom*.props
+# added by PC-migration backup
+.env
+.env.*
+*.key
+*.pem
+*.sqlite
+*.db

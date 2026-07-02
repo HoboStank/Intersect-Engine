@@ -11,7 +11,9 @@
   <Import Project=".\Intersect.props" />
 
   <PropertyGroup>
-    <IntersectProjectName>$(MSBuildProjectName.Substring(10))</IntersectProjectName>
+    <!-- Some projects (tools) use short names; guard the Substring call to avoid MSBuild errors when name length < 10 -->
+    <IntersectProjectName Condition="$([System.String]::Copy('$(MSBuildProjectName)').Length) &gt; 10">$(MSBuildProjectName.Substring(10))</IntersectProjectName>
+    <IntersectProjectName Condition="$([System.String]::Copy('$(MSBuildProjectName)').Length) &lt;= 10">$(MSBuildProjectName)</IntersectProjectName>
   </PropertyGroup>
 
   <PropertyGroup>

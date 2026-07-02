@@ -47,6 +47,16 @@ public sealed class LiteNetLibConnection : AbstractConnection
         var hail = new HailPacket(interfaceAsymmetric, handshakeSecret, SharedConstants.VersionData, hailParameters);
         hail.Encrypt();
 
+        // Diagnostic: log the encrypted hail bytes so client and server views can be compared during handshake debugging.
+        try
+        {
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Hail.EncryptedData ({hail.EncryptedData?.Length ?? 0} bytes): {Convert.ToHexString(hail.EncryptedData ?? Array.Empty<byte>())}");
+        }
+        catch (Exception ex)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(ex, "Failed to log hail encrypted data for diagnostics.");
+        }
+
         var connectionData = NetDataWriter.FromBytes(hail.Data, false);
 
         ApplicationContext.Context.Value?.Logger.LogInformation($"Connecting to {network.Configuration.Host}:{network.Configuration.Port}...");

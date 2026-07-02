@@ -1,0 +1,45 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "rebuild-server-and-restart-container",
+			"type": "shell",
+			"command": "dotnet build Intersect.sln -c Debug ; docker compose -f docker/docker-compose.yml up -d --build ; docker logs -f intersect-server",
+			"isBackground": false,
+			"problemMatcher": [
+				"$mscompile"
+			],
+			"group": "build"
+		},
+		{
+			"label": "run-headless-client-once",
+			"type": "shell",
+			"command": "dotnet run --project tools/headless-client -- 127.0.0.1 5400",
+			"isBackground": false,
+			"problemMatcher": [
+				"$mscompile"
+			],
+			"group": "test"
+		},
+		{
+			"label": "run-headless-client-again",
+			"type": "shell",
+			"command": "dotnet run --project tools/headless-client -- 127.0.0.1 5400",
+			"isBackground": false,
+			"problemMatcher": [
+				"$mscompile"
+			],
+			"group": "test"
+		},
+		{
+			"label": "build-and-restart-container-logs",
+			"type": "shell",
+			"command": "dotnet build Intersect.sln -c Debug ; docker compose -f docker/docker-compose.yml up -d --build ; docker logs -f --since=10s intersect-server",
+			"isBackground": false,
+			"problemMatcher": [
+				"$mscompile"
+			],
+			"group": "build"
+		}
+	]
+}

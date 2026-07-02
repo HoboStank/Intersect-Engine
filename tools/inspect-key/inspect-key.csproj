@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Ensure the shared Directory.Build.props icon path doesn't break tool projects by pointing to the repo assets -->
+    <ApplicationIcon>C:\Repos\Intersect-Engine\assets\intersect-logo-qu.ico</ApplicationIcon>
+  </PropertyGroup>
+</Project>
